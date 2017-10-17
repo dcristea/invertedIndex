@@ -2,6 +2,7 @@ package homework;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,11 +15,27 @@ public class TestRunner {
 
     InvertedIndex invertedIndex = new InvertedIndex();
 
+
+    public File getResource(String resourceName) {
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        return new File(classLoader.getResource(resourceName).getFile());
+    }
+
+    public void mainExecution(String fileExtension,String filePath,String searchWords,String regex) throws IOException {
+
+        InvertedIndex invertedIndex = new InvertedIndex();
+        invertedIndex.enterDirectoryPath(filePath, fileExtension);
+        invertedIndex.search(Arrays.asList(searchWords.split(regex)));
+
+    }
+
     @Test
     public void checkFilePathIsADirectory() throws IOException {
 
-        String expectedResult = "C:\\Work\\workspace\\homework\\src\\main\\resources\\documents";
-        String actualResult = "C:\\Work\\workspace\\homework\\src\\main\\resources\\documents";
+        String expectedResult = String.valueOf(getResource("documents"));
+        String actualResult = String.valueOf(getResource("documents"));
+        System.out.println(expectedResult);
         invertedIndex.enterDirectoryPath(actualResult, ".txt");
         assertEquals("The file path is not a directory", expectedResult, actualResult);
     }
@@ -34,7 +51,7 @@ public class TestRunner {
     @Test
     public void checkFileExtensionIsTxt() throws IOException {
 
-        String filePath = "C:\\Work\\workspace\\homework\\src\\main\\resources\\documents";
+        String filePath = String.valueOf(getResource("documents"));
         String fileExtension = ".txt";
         invertedIndex.enterDirectoryPath(filePath, fileExtension);
         assertThat("File extension is .txt", fileExtension, is(".txt"));
@@ -43,7 +60,7 @@ public class TestRunner {
     @Test
     public void checkFileExtensionInvalidValue() throws IOException {
 
-        String filePath = "C:\\Work\\workspace\\homework\\src\\main\\resources\\documents";
+        String filePath = String.valueOf(getResource("documents"));
         String fileExtension = "3";
         invertedIndex.enterDirectoryPath(filePath, fileExtension);
         fail("File extension is not .txt");
@@ -54,14 +71,14 @@ public class TestRunner {
 
         String searchWords = "planet";
         invertedIndex.search(Arrays.asList(searchWords.split(" ")));
-        assertThat("Search word(s) is(are) not valid",searchWords,is("planet"));
+        assertThat("Search word(s) is(are) not valid", searchWords, is("planet"));
     }
 
     @Test
     public void checkStopWords() throws FileNotFoundException {
 
         String searchWords = "the";
-        assertEquals("Search word is a stop word",true,invertedIndex.getStopWords().contains(searchWords));
+        assertEquals("Search word is a stop word", true, invertedIndex.getStopWords().contains(searchWords));
     }
 
     @Test
@@ -70,6 +87,6 @@ public class TestRunner {
         String searchWords = "planet evidence";
         String regex = " ";
         invertedIndex.search(Arrays.asList(searchWords.split(regex)));
-        assertEquals("Valid regex is used",regex," ");
+        assertEquals("Valid regex is used", regex, " ");
     }
 }
