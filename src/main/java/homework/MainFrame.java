@@ -1,6 +1,5 @@
 package homework;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -10,7 +9,7 @@ public class MainFrame {
     static String filePath;
     static String searchWords;
 
-    public MainFrame(String filePath, String searchWords) {
+    public MainFrame(String filePath, String searchWords, String fileExtension) {
 
         MainFrame.filePath = filePath;
         MainFrame.searchWords = searchWords;
@@ -20,23 +19,13 @@ public class MainFrame {
 
         InvertedIndex invertedIndex = new InvertedIndex();
         Scanner userInput = new Scanner(System.in);
+        String fileExtension = ".txt";
 
 
         try {
             System.out.print("Enter file path where documents are located: ");
             filePath = userInput.nextLine();
-
-            File folder = new File(filePath);
-            File[] listOfFiles = folder.listFiles();
-
-            for (File listOfFile : listOfFiles) {
-                if (listOfFile.isFile() && listOfFile.toString().contains(".txt")) {
-                    invertedIndex.indexFile(listOfFile);
-                } else if (listOfFile.isDirectory()) {
-                    System.out.println(listOfFile.getName() + " is a Directory");
-                    System.exit(0);
-                }
-            }
+            invertedIndex.enterDirectoryPath(filePath, fileExtension);
 
             System.out.print("Enter search words: ");
             searchWords = userInput.nextLine();

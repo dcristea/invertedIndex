@@ -8,7 +8,20 @@ class InvertedIndex {
     Map<String, List<Tuple>> index = new HashMap<String, List<Tuple>>();
     List<String> files = new ArrayList<String>();
 
-    void indexFile(File file) throws IOException {
+
+    public void enterDirectoryPath(String directory, String fileExtension) throws IOException {
+
+        File folder = new File(directory);
+        File[] listOfFiles = folder.listFiles();
+
+        for (File listOfFile : listOfFiles) {
+            if (listOfFile.isFile() && listOfFile.toString().contains(fileExtension)) {
+                indexFile(listOfFile);
+            }
+        }
+    }
+
+    public void indexFile(File file) throws IOException {
 
         int fileNumber = files.indexOf(file.getPath());
         if (fileNumber == -1) {
@@ -34,7 +47,7 @@ class InvertedIndex {
         System.out.println("indexed " + file.getPath() + " " + pos + " words");
     }
 
-    private List getStopWords() throws FileNotFoundException {
+    public List getStopWords() throws FileNotFoundException {
 
         String fileName = "stopwords_en.txt";
         ClassLoader classLoader = getClass().getClassLoader();
@@ -54,7 +67,7 @@ class InvertedIndex {
         return listStopWords;
     }
 
-    void search(List<String> words) {
+    public void search(List<String> words) throws FileNotFoundException {
         for (String _word : words) {
             Set<String> answer = new HashSet<String>();
             String word = _word.toLowerCase();
@@ -67,6 +80,12 @@ class InvertedIndex {
             for (String f : answer) {
                 System.out.print(word);
                 System.out.println(" " + f);
+            }
+            if(answer.size() == 0) {
+                System.out.println("Search words not found");
+            }
+            if(getStopWords().contains(word)) {
+                System.out.println("The word is a stopword");
             }
             System.out.println("");
         }
